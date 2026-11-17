@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IPL Ticket Booking Portal</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #c478f0;
+        color: #333;
+        padding-bottom: 40px;
+      }
+
+      header {
+        background-color: rgb(240, 113, 240);
+        color: rgb(255, 255, 255);
+        text-align: center;
+        padding: 20px 0;
+        margin-bottom: 30px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .card {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      h2 {
+        color: #092d63;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f4f6f9;
+        padding-bottom: 8px;
+      }
+
+      .match-details p {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        font-size: 0.9rem;
+      }
+
+      select,
+      input[type="text"],
+      input[type="email"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      .error-text {
+        color: #f3070f;
+        font-size: 0.8rem;
+        display: block;
+        margin-top: 4px;
+      }
+
+      .price-display {
+        background-color: #eef7ee;
+        border: 1px solid #cce8cc;
+        border-radius: 4px;
+        padding: 12px;
+        margin-top: 15px;
+        text-align: center;
+        color: #2e7d32;
+      }
+
+      button {
+        width: 100%;
+        background-color: #19c25a;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background-color: #c6161c;
+      }
+
+      #viewHistoryButton {
+        background-color: #0b1a30;
+      }
+
+      #viewHistoryButton:hover {
+        background-color: #050d1a;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #historyContainer {
+        margin-top: 20px;
+      }
+
+      .status-message {
+        margin-top: 12px;
+        color: #092d63;
+      }
+
+      .status-message:empty {
+        display: none;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .history-section {
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        border: 1px solid #dddddd;
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background-color: #f4f6f9;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>IPL Ticket Booking Portal</h1>
+    </header>
+
+    <div class="container">
+      <section class="card">
+        <h2>Match Information</h2>
+
+        <div class="match-details">
+          <p>
+            <strong>Match:</strong> <span id="displayTeams">Loading...</span>
+          </p>
+          <p><strong>Date:</strong> <span id="displayDate">Loading...</span></p>
+          <p>
+            <strong>Venue:</strong> <span id="displayVenue">Loading...</span>
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Sign in to book and view your history</h2>
+        <p>Enter your email and we’ll send you a secure sign-in link.</p>
+        <form id="signInForm">
+          <div class="form-group">
+            <label for="signInEmail">Email Address:</label>
+            <input type="email" id="signInEmail" placeholder="name@example.com" required />
+          </div>
+          <button type="submit" id="signInButton">Send sign-in link</button>
+        </form>
+        <button type="button" id="signOutButton" class="hidden">Sign out</button>
+        <p id="authStatus" class="status-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card">
+        <h2>Personal Information & Tickets</h2>
+        <form id="bookingForm">
+          <div class="form-group">
+            <label for="userName">Full Name:</label>
+            <input
+              type="text"
+              id="userName"
+              placeholder="Enter your full name"
+              required
+            />
+            <span class="error-text" id="nameError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="userEmail">Email Address:</label>
+            <input type="email" id="userEmail" placeholder="Sign in to use your account email" readonly required />
+            <span class="error-text" id="emailError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="userMobile">Mobile Number:</label>
+            <input
+              type="text"
+              id="userMobile"
+              placeholder="10-digit mobile number"
+              pattern="[6-9][0-9]{9}"
+              title="Enter a 10-digit mobile number starting with 6, 7, 8, or 9."
+              required
+            />
+            <span class="error-text" id="mobileError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="standType">Choose Stand / Ticket Type:</label>
+            <select id="standType" required>
+              <option value="1200">General Stands - Rs.1,200</option>
+              <option value="2500">East Gallery - Rs.2,500</option>
+              <option value="5000">Grand Stand - Rs.5,000</option>
+              <option value="12000">VIP Lounge - Rs.12,000</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ticketCount">Number of Tickets:</label>
+            <input type="number" id="ticketCount" min="1" max="10" value="1" required />
+          </div>
+
+          <div class="price-display">
+            <h3>Total Amount: ₹<span id="totalAmount">1200</span></h3>
+          </div>
+
+          <button type="submit" id="bookButton" disabled>Confirm Booking</button>
+        </form>
+        <p id="bookingStatus" class="status-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card history-section">
+        <h2>Booking History</h2>
+        <button type="button" id="viewHistoryButton" disabled>View my booking history</button>
+        <p id="historyStatus" class="status-message" role="status" aria-live="polite"></p>
+        <div id="historyContainer" class="hidden">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Match</th>
+                  <th>Date</th>
+                  <th>Venue</th>
+                  <th>Stand</th>
+                  <th>Tickets</th>
+                  <th>Total</th>
+                  <th>Booked</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+      import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./supabase-config.js";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const match = {
+        teams: urlParams.get("teams"),
+        date: urlParams.get("date"),
+        venue: urlParams.get("venue"),
+      };
+
+      document.getElementById("displayTeams").textContent =
+        match.teams || "Select a match from the schedule";
+      document.getElementById("displayDate").textContent = match.date || "—";
+      document.getElementById("displayVenue").textContent = match.venue || "—";
+
+      const signInForm = document.getElementById("signInForm");
+      const signInEmailInput = document.getElementById("signInEmail");
+      const signInButton = document.getElementById("signInButton");
+      const signOutButton = document.getElementById("signOutButton");
+      const authStatus = document.getElementById("authStatus");
+      const bookingForm = document.getElementById("bookingForm");
+      const userNameInput = document.getElementById("userName");
+      const userEmailInput = document.getElementById("userEmail");
+      const userMobileInput = document.getElementById("userMobile");
+      const standTypeSelect = document.getElementById("standType");
+      const ticketCountInput = document.getElementById("ticketCount");
+      const totalAmountSpan = document.getElementById("totalAmount");
+      const bookButton = document.getElementById("bookButton");
+      const bookingStatus = document.getElementById("bookingStatus");
+      const viewHistoryButton = document.getElementById("viewHistoryButton");
+      const historyContainer = document.getElementById("historyContainer");
+      const historyStatus = document.getElementById("historyStatus");
+      const historyBody = document.getElementById("historyBody");
+
+      function setStatus(element, message, isError = false) {
+        element.textContent = message;
+        element.style.color = isError ? "#b91c1c" : "";
+      }
+
+      function updateTotalPrice() {
+        const price = Number(standTypeSelect.value);
+        const count = Number(ticketCountInput.value);
+        totalAmountSpan.textContent =
+          Number.isInteger(count) && count >= 1 && count <= 10 ? String(price * count) : "0";
+      }
+
+      standTypeSelect.addEventListener("change", updateTotalPrice);
+      ticketCountInput.addEventListener("input", updateTotalPrice);
+
+      const isConfigured =
+        SUPABASE_URL.startsWith("https://") &&
+        !SUPABASE_URL.includes("YOUR_PROJECT") &&
+        SUPABASE_PUBLISHABLE_KEY.length > 20 &&
+        !SUPABASE_PUBLISHABLE_KEY.includes("YOUR_");
+
+      if (!isConfigured) {
+        setStatus(
+          authStatus,
+          "Add your Supabase project URL and publishable key in supabase-config.js to enable bookings.",
+          true,
+        );
+        signInButton.disabled = true;
+      } else {
+        const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        let currentUser = null;
+
+        function applySession(session) {
+          currentUser = session?.user ?? null;
+          const isSignedIn = Boolean(currentUser);
+          bookButton.disabled = !isSignedIn;
+          viewHistoryButton.disabled = !isSignedIn;
+          signOutButton.classList.toggle("hidden", !isSignedIn);
+          signInEmailInput.disabled = isSignedIn;
+          signInButton.disabled = isSignedIn;
+          userEmailInput.value = currentUser?.email ?? "";
+          setStatus(
+            authStatus,
+            isSignedIn
+              ? `Signed in as ${currentUser.email}.`
+              : "Sign in with email before booking or viewing your history.",
+          );
+          if (!isSignedIn) {
+            historyContainer.classList.add("hidden");
+            historyBody.replaceChildren();
+            setStatus(historyStatus, "");
+          }
+        }
+
+        signInForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          signInButton.disabled = true;
+          setStatus(authStatus, "Sending sign-in link…");
+
+          try {
+            const { error } = await supabase.auth.signInWithOtp({
+              email: signInEmailInput.value.trim(),
+              options: { emailRedirectTo: window.location.href },
+            });
+            setStatus(
+              authStatus,
+              error
+                ? `Could not send sign-in link: ${error.message}`
+                : "Check your email for the secure sign-in link.",
+              Boolean(error),
+            );
+          } catch (error) {
+            setStatus(authStatus, `Could not send sign-in link: ${error.message}`, true);
+          } finally {
+            signInButton.disabled = Boolean(currentUser);
+          }
+        });
+
+        signOutButton.addEventListener("click", async () => {
+          try {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              setStatus(authStatus, `Could not sign out: ${error.message}`, true);
+            }
+          } catch (error) {
+            setStatus(authStatus, `Could not sign out: ${error.message}`, true);
+          }
+        });
+
+        async function loadHistory() {
+          historyContainer.classList.remove("hidden");
+          historyBody.replaceChildren();
+          setStatus(historyStatus, "Loading your bookings…");
+
+          try {
+            const { data, error } = await supabase
+              .from("ipl_bookings")
+              .select(
+                "id, teams, match_date, venue, stand, ticket_count, total_price, created_at",
+              )
+              .order("created_at", { ascending: false });
+
+            if (error) {
+              setStatus(historyStatus, `Could not load booking history: ${error.message}`, true);
+              return;
+            }
+
+            if (!data.length) {
+              setStatus(historyStatus, "You don’t have any bookings yet.");
+              return;
+            }
+
+            for (const booking of data) {
+              const row = document.createElement("tr");
+              const values = [
+                booking.teams,
+                booking.match_date,
+                booking.venue,
+                booking.stand,
+                booking.ticket_count,
+                `₹${booking.total_price}`,
+                new Date(booking.created_at).toLocaleString(),
+              ];
+              for (const value of values) {
+                const cell = document.createElement("td");
+                cell.textContent = String(value ?? "");
+                row.append(cell);
+              }
+              historyBody.append(row);
+            }
+            setStatus(historyStatus, "");
+          } catch (error) {
+            setStatus(historyStatus, `Could not load booking history: ${error.message}`, true);
+          }
+        }
+
+        viewHistoryButton.addEventListener("click", loadHistory);
+
+        bookingForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          setStatus(bookingStatus, "");
+
+          if (!currentUser) {
+            setStatus(bookingStatus, "Sign in before booking.", true);
+            return;
+          }
+          if (!match.teams || !match.date || !match.venue) {
+            setStatus(bookingStatus, "Select a match from the schedule before booking.", true);
+            return;
+          }
+
+          const ticketCount = Number(ticketCountInput.value);
+          const ticketPrice = Number(standTypeSelect.value);
+          if (!bookingForm.reportValidity() || ticketCount < 1 || ticketCount > 10) {
+            return;
+          }
+
+          bookButton.disabled = true;
+          setStatus(bookingStatus, "Saving your booking…");
+          try {
+            const { error } = await supabase.from("ipl_bookings").insert({
+              user_id: currentUser.id,
+              teams: match.teams,
+              match_date: match.date,
+              venue: match.venue,
+              name: userNameInput.value.trim(),
+              email: currentUser.email,
+              mobile: userMobileInput.value.trim(),
+              stand: standTypeSelect.options[standTypeSelect.selectedIndex].text,
+              ticket_count: ticketCount,
+              unit_price: ticketPrice,
+            });
+
+            if (error) {
+              setStatus(bookingStatus, `Booking could not be saved: ${error.message}`, true);
+              return;
+            }
+
+            setStatus(bookingStatus, "Ticket booking saved successfully.");
+            userNameInput.value = "";
+            userMobileInput.value = "";
+            ticketCountInput.value = "1";
+            updateTotalPrice();
+            if (!historyContainer.classList.contains("hidden")) {
+              await loadHistory();
+            }
+          } catch (error) {
+            setStatus(bookingStatus, `Booking could not be saved: ${error.message}`, true);
+          } finally {
+            bookButton.disabled = !currentUser;
+          }
+        });
+
+        supabase.auth.onAuthStateChange((_event, session) => applySession(session));
+        supabase.auth
+          .getSession()
+          .then(({ data, error }) => {
+            if (error) {
+              setStatus(authStatus, `Could not check sign-in status: ${error.message}`, true);
+              return;
+            }
+            applySession(data.session);
+          })
+          .catch((error) => {
+            setStatus(authStatus, `Could not check sign-in status: ${error.message}`, true);
+          });
+      }
+    </script>
+  </body>
+</html>

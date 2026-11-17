@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IPL Match Schedule</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #c8dcf1;
+        color: #333;
+        padding-bottom: 40px;
+      }
+
+      header {
+        background-color: #102a56;
+        color: white;
+        text-align: center;
+        padding: 20px 12px;
+        margin-bottom: 30px;
+      }
+
+      header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+      }
+
+      header p {
+        font-size: 1rem;
+        color: #cbd5e1;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      section {
+        background: #ffffff;
+        padding: 30px;
+        margin-bottom: 30px;
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      section ul {
+        padding-left: 20px;
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      h2 {
+        color: #102a56;
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 8px;
+      }
+
+      .filter-form-class {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      label {
+        font-weight: bold;
+        font-size: 0.95rem;
+        color: #334155;
+      }
+
+      select,
+      button,
+      .book-btn {
+        padding: 10px 14px;
+        border-radius: 5px;
+        font-size: 15px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+      }
+
+      select {
+        border: 1px solid #94a3b8;
+        background: rgb(251, 249, 251);
+        min-width: 200px;
+      }
+
+      .reset-btn-class {
+        background: #475569;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      .reset-btn-class:hover {
+        background: #334155;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      caption {
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: left;
+        color: #102a56;
+        font-size: 1.1rem;
+      }
+
+      th,
+      td {
+        border: 1px solid #cbd5e1;
+        padding: 12px;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        background-color: #f1f5f9;
+        font-weight: bold;
+        color: #1e293b;
+      }
+
+      .book-btn {
+        background: #e21d24;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .book-btn:hover {
+        background: #c6161c;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🏏 IPL Match Schedule</h1>
+      <p>Find your match and book your tickets</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Ticket Booking Information</h2>
+        <ul>
+          <li>Select your favourite team.</li>
+          <li>Check the match date, time and venue.</li>
+          <li>Compare the available ticket prices.</li>
+          <li>Click Book to view your selected match.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Find a Match</h2>
+        <form class="filter-form-class">
+          <label for="teamFilter">Filter by Name:</label>
+          <select id="teamFilter" name="team">
+            <option value="">All Teams</option>
+            <option value="CSK">Chennai Super Kings</option>
+            <option value="MI">Mumbai Indians</option>
+            <option value="RCB">Royal Challengers Bangalore</option>
+            <option value="KKR">Kolkata Knight Riders</option>
+          </select>
+          <button type="submit" class="reset-btn-class">Apply Filter</button>
+          <button type="reset" class="reset-btn-class">Show all</button>
+        </form>
+
+        <div class="table-wrapper">
+          <table>
+            <caption>
+              Upcoming Sample Matches
+            </caption>
+            <thead>
+              <tr>
+                <th>Match No</th>
+                <th>Teams</th>
+                <th>Date &amp; Time</th>
+                <th>Venue</th>
+                <th>Ticket Price</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>CSK-MI</td>
+                <td>29-Jan-27 6:30 PM</td>
+                <td>Chennai</td>
+                <td>800-5000/-</td>
+                <td>
+                  <a
+                    href="Booking-validate.html"
+                    class="book-btn"
+                    data-teams="CSK vs MI"
+                    data-date="29-Jan-27 6:30 PM"
+                    data-venue="Chennai"
+                    >Book</a
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>RR-RCB</td>
+                <td>29-Jan-27 6:30 PM</td>
+                <td>Mohali</td>
+                <td>800-5000/-</td>
+                <td>
+                  <a
+                    href="Booking-validate.html"
+                    class="book-btn"
+                    data-teams="RR vs RCB"
+                    data-date="29-Jan-27 6:30 PM"
+                    data-venue="Mohali"
+                    >Book</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- JavaScript placed neatly at the bottom -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var bookButtons = document.querySelectorAll(".book-btn");
+
+        bookButtons.forEach(function (button) {
+          button.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            var matchTeams = this.getAttribute("data-teams");
+            var matchDate = this.getAttribute("data-date");
+            var matchVenue = this.getAttribute("data-venue");
+
+            var targetUrl =
+              "Booking-validate.html" +
+              "?teams=" +
+              encodeURIComponent(matchTeams) +
+              "&date=" +
+              encodeURIComponent(matchDate) +
+              "&venue=" +
+              encodeURIComponent(matchVenue);
+
+            window.location.href = targetUrl;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
